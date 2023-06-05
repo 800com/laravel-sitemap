@@ -3,10 +3,9 @@
 namespace Laravelium\Sitemap\Test;
 
 use Laravelium\Sitemap\Sitemap;
-use Orchestra\Testbench\TestCase;
 use Laravelium\Sitemap\SitemapServiceProvider;
 
-class SitemapTest extends TestCase
+class SitemapTest extends \Orchestra\Testbench\TestCase
 {
     /**
      * @var Sitemap

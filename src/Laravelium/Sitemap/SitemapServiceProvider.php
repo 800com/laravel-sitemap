@@ -2,6 +2,7 @@
 
 namespace Laravelium\Sitemap;
 
+use Illuminate\Config\Repository;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Contracts\Container\Container;
@@ -11,10 +12,8 @@ class SitemapServiceProvider extends ServiceProvider implements DeferrableProvid
 {
     /**
      * Bootstrap the application events.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->loadViewsFrom(__DIR__.'/../../views', 'sitemap');
 
@@ -37,16 +36,20 @@ class SitemapServiceProvider extends ServiceProvider implements DeferrableProvid
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->app->bind('sitemap', function (Container $app) {
-            $config = $app->make('config');
+            $config = $app->make(Repository::class);
+
+            $sitemap = $config->get('sitemap');
+
+            if (!is_array($sitemap)) {
+                $sitemap = [];
+            }
 
             return new Sitemap(
-                $config->get('sitemap'),
+                $sitemap,
                 $app->make('cache.store'),
                 $config,
                 $app->make('files'),
@@ -59,9 +62,9 @@ class SitemapServiceProvider extends ServiceProvider implements DeferrableProvid
     }
 
     /**
-     * {@inheritdoc}
+     * @return string[]
      */
-    public function provides()
+    public function provides(): array
     {
         return ['sitemap', Sitemap::class];
     }
